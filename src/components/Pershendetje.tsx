@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
 
 type Props = {
   emri: string;

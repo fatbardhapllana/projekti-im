@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { Button, Text, View } from "react-native";
-import Pershendetje from "../components/Pershendetje";
+import { View } from "react-native";
+import KartaTerminit from "../components/KartaTerminit";
 
 export default function Index() {
-  const [numri, setNumri] = useState(0);
+  const [konfirmuar, setKonfirmuar] = useState<string[]>([]);
+
+  const statusi = (id: string) =>
+    konfirmuar.includes(id) ? "Konfirmuar" : "Në pritje";
+
+  const konfirmo = (id: string) => setKonfirmuar((lista) => [...lista, id]);
 
   return (
     <View
@@ -14,10 +19,28 @@ export default function Index() {
         gap: 12,
       }}
     >
-      <Pershendetje emri="Fatbardha" />
-
-      <Text>Me useState: {numri}</Text>
-      <Button title="Rrit useState" onPress={() => setNumri(numri + 1)} />
+      <KartaTerminit
+        ora="09:00"
+        klienti="Arben K."
+        sherbimi="Qethje"
+        statusi={statusi("t1")}
+        onKonfirmo={() => konfirmo("t1")}
+      />
+      <KartaTerminit
+        ora="10:30"
+        klienti="Drita M."
+        sherbimi="Larje"
+        shenim="Ardh 10 minuta më herët"
+        statusi={statusi("t2")}
+        onKonfirmo={() => konfirmo("t2")}
+      />
+      <KartaTerminit
+        ora="12:00"
+        klienti="Besnik H."
+        sherbimi="Qethje + mjekër"
+        statusi={statusi("t3")}
+        onKonfirmo={() => konfirmo("t3")}
+      />
     </View>
   );
 }
