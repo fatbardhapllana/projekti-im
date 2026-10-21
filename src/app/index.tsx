@@ -1,46 +1,50 @@
 import { useState } from "react";
-import { View } from "react-native";
-import KartaTerminit from "../components/KartaTerminit";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import KartaPako from "../components/KartaPako";
+import { pakot } from "../data/pakot";
 
 export default function Index() {
-  const [konfirmuar, setKonfirmuar] = useState<string[]>([]);
-
-  const statusi = (id: string) =>
-    konfirmuar.includes(id) ? "Konfirmuar" : "Në pritje";
-
-  const konfirmo = (id: string) => setKonfirmuar((lista) => [...lista, id]);
+  const [zgjedhur, setZgjedhur] = useState<string | null>(null);
+  const pakoZgjedhur = pakot.find((p) => p.id === zgjedhur);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 12,
-      }}
-    >
-      <KartaTerminit
-        ora="09:00"
-        klienti="Arben K."
-        sherbimi="Qethje"
-        statusi={statusi("t1")}
-        onKonfirmo={() => konfirmo("t1")}
+    <View style={styles.faqja}>
+      <Text style={styles.titulli}>Pakot e mia</Text>
+
+      <FlatList
+        data={pakot}
+        keyExtractor={(p) => p.id}
+        contentContainerStyle={{ gap: 12 }}
+        style={{ flexGrow: 0 }}
+        renderItem={({ item }) => (
+          <KartaPako
+            pako={item}
+            zgjedhur={item.id === zgjedhur}
+            onPress={() => setZgjedhur(item.id)}
+          />
+        )}
       />
-      <KartaTerminit
-        ora="10:30"
-        klienti="Drita M."
-        sherbimi="Larje"
-        shenim="Ardh 10 minuta më herët"
-        statusi={statusi("t2")}
-        onKonfirmo={() => konfirmo("t2")}
-      />
-      <KartaTerminit
-        ora="12:00"
-        klienti="Besnik H."
-        sherbimi="Qethje + mjekër"
-        statusi={statusi("t3")}
-        onKonfirmo={() => konfirmo("t3")}
-      />
+
+      {pakoZgjedhur && (
+        <View style={styles.pyetjet}>
+          <Text style={styles.nentitulli}>{pakoZgjedhur.emri}</Text>
+          {pakoZgjedhur.kartelat.map((k) => (
+            <Text key={k.id}>• {k.pyetja}</Text>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  faqja: {
+    flex: 1,
+    alignItems: "center",
+    paddingTop: 70,
+    gap: 16,
+  },
+  titulli: { fontSize: 26, fontWeight: "bold" },
+  pyetjet: { width: 300, gap: 6 },
+  nentitulli: { fontSize: 18, fontWeight: "bold" },
+});
